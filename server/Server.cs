@@ -284,5 +284,52 @@ namespace Server
                 }
             }
         }
+
+        static void PrikaziStanje()
+        {
+            Console.Clear();
+            Console.WriteLine("╔══════════════════════════════════════════════════════════════════╗");
+            Console.WriteLine("║                      TAKSI CENTAR SERVER                         ║");
+            Console.WriteLine("╠══════════════════════════════════════════════════════════════════╣");
+            Console.WriteLine();
+
+            // Tabela vozila
+            Console.WriteLine("  VOZILA:");
+            Console.WriteLine("  ┌────┬────────────┬──────────┬──────────────┬────────────┬──────────┐");
+            Console.WriteLine("  │ ID │  Pozicija  │  Status  │ Kilometraza  │   Zarada   │ Musterije│");
+            Console.WriteLine("  ├────┼────────────┼──────────┼──────────────┼────────────┼──────────┤");
+            foreach (var v in vozila)
+            {
+                Console.WriteLine($"  │{v.Id,3} │ ({v.X,4:F1},{v.Y,4:F1})│{v.Status,9} │{v.Kilometraza,13:F1} │{v.Zarada,11:F1} │{v.BrojMusterija,9} │");
+            }
+            Console.WriteLine("  └────┴────────────┴──────────┴──────────────┴────────────┴──────────┘");
+            Console.WriteLine();
+
+            // Tabela zahteva klijenata
+            var aktivniKlijenti = klijenti.Where(k => k.Status != "zavrseno").ToList();
+            Console.WriteLine("  AKTIVNI ZAHTEVI KLIJENATA:");
+            Console.WriteLine("  ┌────┬──────────────┬──────────────┬────────────┐");
+            Console.WriteLine("  │ ID │   Pocetna    │   Krajnja    │   Status   │");
+            Console.WriteLine("  ├────┼──────────────┼──────────────┼────────────┤");
+            if (aktivniKlijenti.Count == 0)
+            {
+                Console.WriteLine("  │         Nema aktivnih zahteva.              │");
+            }
+            else
+            {
+                foreach (var k in aktivniKlijenti)
+                {
+                    Console.WriteLine($"  │{k.Id,3} │ ({k.StartX,4:F1},{k.StartY,4:F1}) │ ({k.EndX,4:F1},{k.EndY,4:F1}) │{k.Status,11} │");
+                }
+            }
+            Console.WriteLine("  └────┴──────────────┴──────────────┴────────────┘");
+            Console.WriteLine();
+
+            // Tabela zadataka
+            var aktivniZadaci = zadaci.Where(z => z.Status == "aktivan").ToList();
+            Console.WriteLine($"  Aktivnih zadataka: {aktivniZadaci.Count}  |  Ukupno zavrsenih: {zadaci.Count(z => z.Status == "zavrsen")}");
+            Console.WriteLine();
+            Console.WriteLine("  Cekam zahteve na UDP portu " + UDP_PORT + "...");
+        }
     }
 }
